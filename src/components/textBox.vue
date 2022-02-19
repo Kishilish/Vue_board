@@ -12,7 +12,6 @@
           title= "投稿"
           :onClick= "post"
           :clickable="canPost"
-      
         />
       </div>
 
@@ -31,6 +30,10 @@ export default {
       type :Function,
       required:true,
 
+    },
+    channelId:{
+      type:String,
+      required:true
     }
   },
   data(){
@@ -42,12 +45,11 @@ export default {
   methods:{
     async post(){
       this.canPost= false;
-      console.log("click")
       try {
         const message =await MessageModel.save(
           {
             body:this.body,
-
+            channelId:this.channelId
           }
         );
         this.onPost(message);

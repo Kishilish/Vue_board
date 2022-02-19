@@ -1,4 +1,4 @@
-import {dbMessages} from "../db/index";
+import {getCollectionMessages} from "../db/index";
 import { serverTimestamp, addDoc,query, orderBy, getDocs,getDoc } from "firebase/firestore";
 
 class Message {
@@ -7,7 +7,7 @@ class Message {
     this.body = body;
     this.date = date;
   }
-  static async save({body}) {
+  static async save({body,channelId}) {
     if(!body || !body.trim()){
       throw new Error("入力必須です。");
     }
@@ -15,12 +15,9 @@ class Message {
     const postData = {
       body,
       date:serverTimestamp(),
-      // .firestore.FieldValue.serverTimestamp(),
-      // https://firebase.google.com/docs/reference/js/v8/firebase.firestore.FieldValue#servertimestamp
-      // https://firebase.google.com/docs/firestore/manage-data/add-data#server_timestamp
     }
 
-    const docRef = await addDoc(dbMessages, postData);
+    const docRef = await addDoc(getCollectionMessages(channelId), postData);
     const snapShot = await getDoc(docRef);
     const data =  snapShot.data();
     const model = this.create(docRef.id, data);
@@ -34,14 +31,12 @@ class Message {
       date:data.date.toDate().toLocaleString()
     });
   }
-  static async fetchMessages(){
-    const snapShot = await getDocs(query( dbMessages , orderBy("date")));
-    // console.log(snapShot);
+  static async fetchMessages(channelId){
+    const snapShot = await getDocs(query( getCollectionMessages(channelId) , orderBy("date")));
     if (snapShot.empty){
       return [];
     }
     return snapShot.docs.map((doc) => {
-      console.log(doc.id, doc.data())
       return this.create(doc.id, doc.data())
     });
   }

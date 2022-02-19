@@ -22,4 +22,8 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
 export const db = getFirestore(app);
-export const dbMessages = collection(db, "messages");
+export const dbChannels = collection(db, "channels");
+// export const dbMessages = collection(db, "channels");
+export const getCollectionMessages = (channelId) => {
+  return collection(db, `channels/${channelId}/messages`)
+}

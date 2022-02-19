@@ -1,17 +1,49 @@
 <template>
   <aside class="menu">
     <ul class="menu-list">
-      <li class="menu-list-title active">全体連絡</li>
+      <!-- <li class="menu-list-title active">全体連絡</li>
       <li class="menu-list-title" >トピックス</li>
-      <li class="menu-list-title">自己紹介</li>
+      <li class="menu-list-title">自己紹介</li> -->
+      <template v-for="{id, name} in menuDataList">
+        <router-link
+          :key="id"
+          :to ="id"
+          class="menu-list-title"
+          tag="li"
+        ><a class="memu-list-title-link"> {{ name }} </a>
 
+        </router-link>
+
+        <!-- v4の時
+        <router-link
+          class="menu-list-title"
+          :key="index"
+          :to = "menuData.to"
+          v-slot="{ navigate }"
+        >
+        <li 
+        @click="navigate" @keypress.enter="navigate" role="link">{{menuData.title}}</li>
+        </router-link> -->
+
+      </template>
+        
+      
     </ul>
   </aside>
 </template>
 
 <script>
+import ChannelModel from "../models/Channels";
 export default {
-
+  async created() {
+    const channels = await ChannelModel.fetch();
+    this.menuDataList = channels;
+  },
+  data(){
+    return {
+      menuDataList : [],
+    }
+  }
 }
 </script>
 <style scoped>
@@ -35,12 +67,17 @@ export default {
   line-height: 30px;
   font-size: 0.8em;
 }
-.menu-list-title:hover, .active {
-  background-color: darkgray;
-  color: white;
-  font-size: 1em;
-  font-weight: bold;
+.memu-list-title-link {
+  text-decoration: none;
+  display: block;
+  color: black;
 
 }
-
+.memu-list-title-link:hover,
+.router-link-exact-active .memu-list-title-link
+{
+  background-color:dimgrey;
+  color: white;
+  font-size: 1.3em;
+}
 </style>

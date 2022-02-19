@@ -3,8 +3,11 @@
     <Header/>
     <div class="app-container">
       <SideMenu/>
-      <Main/>
-      
+      <main class="main-container">
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </main>
 
     </div>
     <!-- <Button 
@@ -18,23 +21,13 @@
 import 'normalize.css'
 import Header from  "./components/Header.vue";
 import SideMenu from "./components/SideMenu.vue";
-import Main from "./components/Main.vue"
-// import Button from "./components/Button.vue"
 
 export default {
   name: 'App',
   components: {
     Header,
     SideMenu,
-    Main,
-    // Button
-},
-methods: {
-  click() {
-    alert("appクリック");
-    // methods含めて後で消す
-  }
-}
+  },
 }
 </script>
 
@@ -42,5 +35,11 @@ methods: {
 .app-container{
   display: flex;
   padding-top: 60px;
+}
+.main-container {
+  width: calc(100% - 200px);
+  left: 200px;
+  position:absolute;
+  flex: 1;
 }
 </style>

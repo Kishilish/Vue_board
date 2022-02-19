@@ -1,14 +1,10 @@
 <template>
-  <main class="main-container">
+  <div>
     <texBox
       :onPost="addMessage"
+      :channelId="this.$route.params.channelId"
     />
     <div class="border-line"></div>
-    <orbit-spinner
-      :animation-duration="1200"
-      :size="55"
-      color="#ff1d5e"
-    />
     <Spinner
       v-if="!initialLoaded"
     />
@@ -16,14 +12,14 @@
       v-else-if="initialLoaded && messages.length === 0"
     >データ0件</p>
     <MessageList :messages="revereseMessage"/>
-  </main>
+  </div>
 </template>
 
 <script>
-import texBox from "./textBox.vue"
-import MessageList from "./MessageList.vue"
+import texBox from "../components/textBox.vue"
+import MessageList from "../components/MessageList.vue"
 import MessageModel from "../models/Message"
-import Spinner from "./Spinner.vue"
+import Spinner from "../components/Spinner.vue"
 
 export default {
   components:{
@@ -39,12 +35,21 @@ export default {
     async fetchMessages(){
       let messages = [];
       try {
-        messages = await MessageModel.fetchMessages();
+        messages = await MessageModel.fetchMessages(this.$route.params.channelId);
       } catch (error) {
         alert(error.message)
       }
-      return messages;
+      this.messages= messages;
+      this.initialLoaded = true;
     },
+  },
+  watch: {
+    "$route":async function () {
+      this.initialLoaded = false,
+      this.messages = []
+      await this.fetchMessages()
+    }
+
   },
   
   computed:{
@@ -53,10 +58,7 @@ export default {
     }
   },
   async created(){
-    const messages =await this.fetchMessages();
-    this.messages= messages;
-    this.initialLoaded = true;
-    
+    await this.fetchMessages();
   },
   data(){
     return {
@@ -69,14 +71,11 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  width: calc(100% - 200px);
-  left: 200px;
-  position:absolute;
-  flex: 1;
-}
+
+
 .border-line {
   border-top: 5px solid gray;
+  margin-bottom: 20px;
 }
 .no-massage {
   text-align: center;
